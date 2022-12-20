@@ -1,4 +1,5 @@
 const errorType = require('../constant/errorType');
+const { getUserByName } = require('../service/userService');
 
 // 验证用户信息是否合规的中间件
 const verifyUser = async function(ctx, next) {
@@ -12,7 +13,12 @@ const verifyUser = async function(ctx, next) {
   }
 
   // 3、判断用户名是否已被注册
-
+  const result = await getUserByName(name);
+  console.log('res', result.length);
+  if (result.length) {
+    const error = new Error(errorType.USER_NAME_EXISTS);
+    return ctx.app.emit('error', error, ctx);
+  }
   await next();
 }
 
