@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/curtisJin/coderHome#readme",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "koa": "^2.14.1"
   },
   "devDependencies": {
