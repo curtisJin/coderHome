@@ -1,5 +1,6 @@
 const errorType = require('../constant/errorType');
 const { getUserByName } = require('../service/userService');
+const { encryptUseMD5 } = require('../utils/passwordEncrypt');
 
 // 验证用户信息是否合规的中间件
 const verifyUser = async function(ctx, next) {
@@ -22,6 +23,14 @@ const verifyUser = async function(ctx, next) {
   await next();
 }
 
+const encryptPassword = async (ctx, next) => {
+  const { password } = ctx.request.body;
+  ctx.request.body.password = encryptUseMD5(password);
+
+  await next();
+}
+
 module.exports = {
   verifyUser,
+  encryptPassword
 }
