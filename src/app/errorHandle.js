@@ -13,6 +13,14 @@ const errorHandler = (error, ctx) => {
       status = 409; // Conflict
       message = '该用户名已经存在，换一个后重试';
       break;
+    case errorTypes.USER_NAME_NOT_EXISTS:
+      status = 400;
+      message = '用户名不存在，请检查后重试';
+      break;
+    case errorTypes.PASSWORD_ERROR:
+      status = 400;
+      message = '用户密码错误';
+      break;
     default:
       status = 404;
       message = '404 NOT FOUND';
