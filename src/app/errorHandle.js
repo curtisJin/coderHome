@@ -21,6 +21,10 @@ const errorHandler = (error, ctx) => {
       status = 400;
       message = '用户密码错误';
       break;
+    case errorTypes.UNAUTHORIZE:
+      status = 401;
+      message = '授权未通过, token过期';
+      break;
     default:
       status = 404;
       message = '404 NOT FOUND';
