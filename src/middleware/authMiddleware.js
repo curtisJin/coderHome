@@ -36,6 +36,10 @@ const verifyAuth = async (ctx, next) => {
 	console.log('验证授权中间件');
 	// 1、获取token
 	const authorization = ctx.headers.authorization;
+	if (!authorization) {
+		const error = new Error(errorType.UNAUTHORIZE);
+		return ctx.app.emit('error', error, ctx);
+	}
 	const token = authorization.replace('Bearer ', '');
 
 	// 2、验证token
