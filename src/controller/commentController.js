@@ -1,4 +1,4 @@
-const { create, getCommentById, getCommentList }  = require('../service/commentService');
+const { create, getCommentById, getCommentList, updateComment }  = require('../service/commentService');
 
 class CommentController {
   async create (ctx, next) {
@@ -12,7 +12,7 @@ class CommentController {
 
   async commentDetail (ctx, next) {
     // 1、获取数据commentId
-    const commentId = ctx.params.commentId;
+    const { commentId } = ctx.params;
 
     // 2、根据commentId获取评论
     const result = await getCommentById(commentId);
@@ -25,6 +25,13 @@ class CommentController {
     // 查询列表
     const result = await getCommentList(offset, size);
     ctx.body = result;
+  }
+
+  async update(ctx, next) {
+    const { commentId } = ctx.params;
+    const { content } = ctx.request.body;
+    const res = await updateComment(content, commentId);
+    ctx.body = res;
   }
 }
 

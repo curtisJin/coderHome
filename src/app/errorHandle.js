@@ -25,6 +25,10 @@ const errorHandler = (error, ctx) => {
       status = 401;
       message = '授权未通过, token过期';
       break;
+    case errorTypes.NOT_PERMISSION:
+      status = 401;
+      message = '不能操作他人的内容';
+      break;
     default:
       status = 404;
       message = '404 NOT FOUND';

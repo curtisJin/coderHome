@@ -1,6 +1,6 @@
 const Router = require('koa-router');
-const { verifyAuth } = require('../middleware/authMiddleware');
-const { create, commentDetail, commentList } = require('../controller/commentController');
+const { verifyAuth, verifyPermission } = require('../middleware/authMiddleware');
+const { create, commentDetail, commentList, update } = require('../controller/commentController');
 
 const commentRouter = new Router({ prefix: '/comment' });
 
@@ -12,5 +12,9 @@ commentRouter.get('/:commentId', commentDetail);
 
 // 查询评论列表
 commentRouter.get('/', commentList);
+
+// 修改评论接口
+  // 1、用户必须登录 2、用户必须具备权限
+commentRouter.patch('/:commentId', verifyAuth, verifyPermission, update);
 
 module.exports = commentRouter;
