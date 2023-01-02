@@ -1,4 +1,4 @@
-const { create, reply, update } = require('../service/subCommentService');
+const { create, reply, update, remove } = require('../service/subCommentService');
 
 class SubCommentController {
   async create(ctx, next) {
@@ -19,6 +19,12 @@ class SubCommentController {
     const { subCommentId } = ctx.params;
     const { content } = ctx.request.body;
     const result = await update(subCommentId, content);
+    ctx.body = result;
+  }
+
+  async remove(ctx, next) {
+    const { subCommentId } = ctx.params;
+    const result = await remove(subCommentId);
     ctx.body = result;
   }
 }

@@ -20,6 +20,12 @@ class SubCommentService {
     const result = await connection.execute(statement, [content, subCommentId]);
     return result[0];
   }
+
+  async remove(subCommentId) {
+    const statement = `DELETE FROM subComment WHERE id = ?;`;
+    const result = await connection.execute(statement, [subCommentId]);
+    return result[0];
+  }
 }
 
 module.exports = new SubCommentService();
