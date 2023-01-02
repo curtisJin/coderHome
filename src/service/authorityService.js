@@ -2,10 +2,10 @@
 const connection = require("../app/dataBase");
 
 class AuthorityService {
-	async checkComment(commentId, userId) {
+	async checkResource(tableName, id, userId) {
 		try {
-			const statement = `SELECT * FROM comment WHERE id = ? AND user_id = ?;`;
-			const [result] = await connection.execute(statement, [commentId, userId]);
+			const statement = `SELECT * FROM ${tableName} WHERE id = ? AND user_id = ?;`;
+			const [result] = await connection.execute(statement, [id, userId]);
 			return result?.length > 0 ? true : false;
 		} catch (error) {
       console.log(error);

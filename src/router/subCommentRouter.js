@@ -1,6 +1,6 @@
 const Router = require('koa-router');
-const { verifyAuth } = require('../middleware/authMiddleware');
-const { create, reply } = require('../controller/subCommentController');
+const { verifyAuth, verifyPermission } = require('../middleware/authMiddleware');
+const { create, reply, update } = require('../controller/subCommentController');
 
 const subCommentRouter = new Router({ prefix: '/subcomment'});
 
@@ -9,5 +9,9 @@ subCommentRouter.post('/', verifyAuth, create);
 
 // 回复子评论
 subCommentRouter.post('/reply', verifyAuth, reply);
+
+// 修改评论
+subCommentRouter.patch('/:subCommentId', verifyAuth, verifyPermission, update);
+// 删除评论
 
 module.exports = subCommentRouter;

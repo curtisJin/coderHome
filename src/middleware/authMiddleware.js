@@ -4,7 +4,7 @@ const { PUBLIC_KEY } = require("../app/config");
 const errorType = require("../constant/errorType");
 const { getUserByName } = require("../service/userService");
 const { encryptUseMD5 } = require("../utils/passwordEncrypt");
-const { checkComment } = require("../service/authorityService");
+const { checkResource } = require("../service/authorityService");
 
 const verifyLogin = async (ctx, next) => {
 	// 1、获取用户名和密码
@@ -57,11 +57,13 @@ const verifyAuth = async (ctx, next) => {
 };
 
 const verifyPermission = async (ctx, next) => {
-	const { commentId } = ctx.params;
+	const [resourceKey] = Object.keys(ctx.params);
+	const tableName = resourceKey?.replace('Id', '');
+	const searchId = ctx.params[resourceKey];
 	const { id } = ctx.user;
 
 	try {
-		const isPermission = await checkComment(commentId, id);
+		const isPermission = await checkResource(tableName, searchId, id);
 		if (isPermission) {
 			await next();
 		} else {

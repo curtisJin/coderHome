@@ -14,6 +14,12 @@ class SubCommentService {
     const result = await connection.execute(statement, [content, parentCommentId, userId, childCommentId]);
     return result[0];
   }
+
+  async update(subCommentId, content) {
+    const statement = `UPDATE subComment SET content = ? WHERE id = ?;`;
+    const result = await connection.execute(statement, [content, subCommentId]);
+    return result[0];
+  }
 }
 
 module.exports = new SubCommentService();
