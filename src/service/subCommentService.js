@@ -8,6 +8,12 @@ class SubCommentService {
     const result = await connection.execute(statement, [content, parentCommentId, userId]);
     return result[0];
   }
+
+  async reply(parentCommentId, content, userId, childCommentId) {
+    const statement = `INSERT INTO subComment (content, parent_comment_id, user_id, child_comment_id) VALUES (?, ?, ?, ?);`;
+    const result = await connection.execute(statement, [content, parentCommentId, userId, childCommentId]);
+    return result[0];
+  }
 }
 
 module.exports = new SubCommentService();
