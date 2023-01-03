@@ -1,8 +1,6 @@
 // 根据请求数据操作数据库
 const connection = require('../app/dataBase');
 
-const commonSql = `SELECT c.id id, c.content content, c.createAt createTime, c.updateAt updateTime, JSON_OBJECT('id', u.id, 'name', u.name) userInfo 
-FROM comment c LEFT JOIN users u ON c.user_id = u.id `;
 class CommentService {
   async create(userId, content) {
     const statement = `INSERT INTO comment (content, user_id) VALUES (?, ?);`;
@@ -11,7 +9,15 @@ class CommentService {
   }
 
   async getCommentById(id) {
-    const statement = commonSql + 'WHERE c.id = ?;';
+    const statement = `SELECT MAX(c.id) id, MAX(c.content) content, MAX(c.createAt) createTime, MAX(c.updateAt) updateTime, JSON_OBJECT('id', MAX(u.id), 'name', MAX(u.name)) userInfo, 
+    JSON_ARRAYAGG(JSON_OBJECT('id', sc.id, 'content', sc.content,
+			'user', JSON_OBJECT('id', cu.id, 'name', cu.name)
+		)) subComments 
+    FROM comment c 
+    LEFT JOIN users u ON c.user_id = u.id 
+    LEFT JOIN subComment sc ON sc.parent_comment_id = c.id 
+		LEFT JOIN users cu ON sc.user_id = cu.id
+    WHERE c.id = ?;`;
     const result = await connection.execute(statement, [id]);
     return result[0];
   }
