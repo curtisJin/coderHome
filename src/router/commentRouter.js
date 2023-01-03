@@ -1,7 +1,8 @@
 const Router = require('koa-router');
 const { verifyAuth, verifyPermission } = require('../middleware/authMiddleware');
-const { create, commentDetail, commentList, update, deleteComment } = require('../controller/commentController');
+const { create, commentDetail, commentList, update, deleteComment, addLabels } = require('../controller/commentController');
 
+const { isLabelExists } = require('../middleware/labelMiddleware');
 const commentRouter = new Router({ prefix: '/comment' });
 
 // 创建评论接口
@@ -19,5 +20,8 @@ commentRouter.patch('/:commentId', verifyAuth, verifyPermission, update);
 
 // 删除评论接口
 commentRouter.delete('/:commentId', verifyAuth, verifyPermission, deleteComment);
+
+// 给评论增加标签接口
+commentRouter.post('/:commentId/labels', verifyAuth, verifyPermission, isLabelExists, addLabels);
 
 module.exports = commentRouter;

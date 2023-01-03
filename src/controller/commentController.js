@@ -4,6 +4,8 @@ const {
 	getCommentList,
 	updateComment,
 	deleteCommentService,
+	addLabels,
+	hasLabelCheck
 } = require("../service/commentService");
 
 class CommentController {
@@ -44,6 +46,23 @@ class CommentController {
 		const { commentId } = ctx.params;
 		const res = await deleteCommentService(commentId);
 		ctx.body = res;
+	}
+
+	async addLabels(ctx, next) {
+		// 1. 获取标签和动态id
+		const { commentId } = ctx.params;
+		const { labels } = ctx;
+
+		// 2. 添加所有标签
+		for(let label of labels) {
+			// 2.1 判断标签是否和动态有关系
+			const hasLabel = await hasLabelCheck(commentId, label?.id);
+			if (!hasLabel) {
+				// 表中没有对应关系
+				await addLabels(commentId, label?.id);
+			}
+		}
+		ctx.body = '标签增加成功';
 	}
 }
 

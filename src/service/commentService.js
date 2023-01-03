@@ -42,6 +42,18 @@ class CommentService {
     const result = await connection.execute(statement, [commentId]);
     return result[0];
   }
+
+  async hasLabelCheck(commentId, labelId) {
+    const statement = `SELECT * FROM comment_label WHERE comment_id = ? AND label_id = ?;`;
+    const result = await connection.execute(statement, [commentId, labelId]);
+
+    return result[0].length > 0
+  }
+  async addLabels(commentId, labelId) {
+    const statement = `INSERT INTO comment_label (comment_id, label_id) VALUES (?, ?);`;
+    const result = await connection.execute(statement, [commentId, labelId]);
+    return result[0];
+  }
 }
 
 module.exports = new CommentService();
