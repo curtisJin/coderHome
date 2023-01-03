@@ -17,7 +17,10 @@ class CommentService {
   }
 
   async getCommentList(offset, size) {
-    const statement = commonSql + 'LIMIT ?, ?;';
+    // 包含了子查询的列表查询
+    const statement = `SELECT c.id id, c.content content, c.createAt createTime, c.updateAt updateTime, JSON_OBJECT('id', u.id, 'name', u.name) userInfo,
+    (SELECT COUNT(*) FROM subComment sc WHERE sc.parent_comment_id = c.id) subCommentCount 
+    FROM comment c LEFT JOIN users u ON c.user_id = u.id LIMIT ?, ?;`;
     const result = await connection.execute(statement, [offset, size]);
     return result[0];
   }

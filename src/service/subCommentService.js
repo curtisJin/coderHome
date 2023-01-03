@@ -26,6 +26,12 @@ class SubCommentService {
     const result = await connection.execute(statement, [subCommentId]);
     return result[0];
   }
+
+  async getSubcommentsByCommentId(commentId) {
+    const statement = `SELECT * FROM subComment WHERE parent_comment_id = ?;`;
+    const result = await connection.execute(statement, [commentId]);
+    return result[0];
+  }
 }
 
 module.exports = new SubCommentService();
