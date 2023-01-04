@@ -6,6 +6,12 @@ class FileService {
     const result = await connection.execute(statement, [filename, mimetype, size, userId]);
     return result[0];
   }
+
+  async updateAvatarUrlById(url, id) {
+    const statement = `UPDATE users SET avatar_url = ? WHERE id = ?;`;
+    const result = await connection.execute(statement, [url, id]);
+    return result[0]
+  }
 }
 
 module.exports = new FileService();

@@ -9,10 +9,10 @@ class CommentService {
   }
 
   async getCommentById(id) {
-    const statement = `SELECT c.id id, c.content content, c.createAt createTime, c.updateAt updateTime, JSON_OBJECT('id', u.id, 'name', u.name) userInfo, 
+    const statement = `SELECT c.id id, c.content content, c.createAt createTime, c.updateAt updateTime, JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUrl', u.avatar_url) userInfo, 
     IF(COUNT(l.id), JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name)), NULL) labels,
     (SELECT IF(COUNT(sc.id), JSON_ARRAYAGG(JSON_OBJECT('id', sc.id, 'content', sc.content,
-    'user', JSON_OBJECT('id', cu.id, 'name', cu.name)
+    'user', JSON_OBJECT('id', cu.id, 'name', cu.name, 'avatarUrl', cu.avatar_url)
   )), NULL) FROM subComment sc LEFT JOIN users cu ON sc.user_id = cu.id WHERE c.id = sc.parent_comment_id) subComments 
     FROM comment c 
     LEFT JOIN users u ON c.user_id = u.id 
