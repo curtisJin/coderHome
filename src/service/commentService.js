@@ -9,15 +9,19 @@ class CommentService {
   }
 
   async getCommentById(id) {
-    const statement = `SELECT MAX(c.id) id, MAX(c.content) content, MAX(c.createAt) createTime, MAX(c.updateAt) updateTime, JSON_OBJECT('id', MAX(u.id), 'name', MAX(u.name)) userInfo, 
-    JSON_ARRAYAGG(JSON_OBJECT('id', sc.id, 'content', sc.content,
-			'user', JSON_OBJECT('id', cu.id, 'name', cu.name)
-		)) subComments 
+    const statement = `SELECT c.id id, c.content content, c.createAt createTime, c.updateAt updateTime, JSON_OBJECT('id', u.id, 'name', u.name) userInfo, 
+    IF(COUNT(sc.id), JSON_ARRAYAGG(JSON_OBJECT('id', sc.id, 'content', sc.content,
+    'user', JSON_OBJECT('id', cu.id, 'name', cu.name)
+  )), NULL) subComments, 
+    IF(COUNT(l.id), JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name)), NULL) labels 
     FROM comment c 
     LEFT JOIN users u ON c.user_id = u.id 
     LEFT JOIN subComment sc ON sc.parent_comment_id = c.id 
 		LEFT JOIN users cu ON sc.user_id = cu.id
-    WHERE c.id = ?;`;
+    LEFT JOIN comment_label cl ON c.id = cl.comment_id
+    LEFT JOIN label l ON cl.label_id = l.id 
+    WHERE c.id = ? 
+    GROUP BY c.id;`;
     const result = await connection.execute(statement, [id]);
     return result[0];
   }
@@ -25,7 +29,8 @@ class CommentService {
   async getCommentList(offset, size) {
     // 包含了子查询的列表查询
     const statement = `SELECT c.id id, c.content content, c.createAt createTime, c.updateAt updateTime, JSON_OBJECT('id', u.id, 'name', u.name) userInfo,
-    (SELECT COUNT(*) FROM subComment sc WHERE sc.parent_comment_id = c.id) subCommentCount 
+    (SELECT COUNT(*) FROM subComment sc WHERE sc.parent_comment_id = c.id) subCommentCount, 
+    (SELECT COUNT(*) FROM comment_label cl WHERE cl.comment_id = c.id) labelCount 
     FROM comment c LEFT JOIN users u ON c.user_id = u.id LIMIT ?, ?;`;
     const result = await connection.execute(statement, [offset, size]);
     return result[0];
