@@ -13,7 +13,8 @@ class CommentService {
     IF(COUNT(l.id), JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name)), NULL) labels,
     (SELECT IF(COUNT(sc.id), JSON_ARRAYAGG(JSON_OBJECT('id', sc.id, 'content', sc.content,
     'user', JSON_OBJECT('id', cu.id, 'name', cu.name, 'avatarUrl', cu.avatar_url)
-  )), NULL) FROM subComment sc LEFT JOIN users cu ON sc.user_id = cu.id WHERE c.id = sc.parent_comment_id) subComments 
+  )), NULL) FROM subComment sc LEFT JOIN users cu ON sc.user_id = cu.id WHERE c.id = sc.parent_comment_id) subComments,
+    (SELECT JSON_ARRAYAGG(CONCAT('http://localhost:8000/comment/images/', file.filename)) FROM file WHERE c.id = file.comment_id) images  
     FROM comment c 
     LEFT JOIN users u ON c.user_id = u.id 
     LEFT JOIN comment_label cl ON c.id = cl.comment_id
@@ -55,6 +56,12 @@ class CommentService {
   async addLabels(commentId, labelId) {
     const statement = `INSERT INTO comment_label (comment_id, label_id) VALUES (?, ?);`;
     const result = await connection.execute(statement, [commentId, labelId]);
+    return result[0];
+  }
+
+  async getFileByFilename(filename) {
+    const statement = `SELECT * FROM file WHERE filename = ?;`;
+    const result = await connection.execute(statement, [filename]);
     return result[0];
   }
 }

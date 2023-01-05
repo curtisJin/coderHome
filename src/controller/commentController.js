@@ -1,3 +1,6 @@
+const fs = require('fs');
+const { PICTURE_PATH } = require('../constant/filePath');
+
 const {
 	create,
 	getCommentById,
@@ -5,7 +8,8 @@ const {
 	updateComment,
 	deleteCommentService,
 	addLabels,
-	hasLabelCheck
+	hasLabelCheck,
+	getFileByFilename
 } = require("../service/commentService");
 
 class CommentController {
@@ -63,6 +67,19 @@ class CommentController {
 			}
 		}
 		ctx.body = '标签增加成功';
+	}
+
+	async fileInfo(ctx, next) {
+		let { filename } = ctx.params;
+		const { type } = ctx.query;
+		const fileInfo = await getFileByFilename(filename);
+
+		const types = ['small', 'normal', 'large'];
+		if (types.some(item => item === type)) {
+			filename = filename + '-' + type;
+		}
+		ctx.response.set('content-type', fileInfo[0]?.mimetype);
+		ctx.body = fs.createReadStream(`${PICTURE_PATH}/${filename}`);
 	}
 }
 
